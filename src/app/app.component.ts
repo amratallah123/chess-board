@@ -7,6 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgxChessBoardService, NgxChessBoardView } from 'ngx-chess-board';
+import { environment } from 'src/environments/environment';
 import { Message } from './models/message';
 @Component({
   selector: 'app-root',
@@ -36,7 +37,7 @@ export class AppComponent implements OnChanges, OnInit {
       fen: this.board?.getFEN(),
       boardHistory: this.board?.getMoveHistory(),
     };
-    parent.postMessage(message, 'http://localhost:4200/');
+    parent.postMessage(message, environment.mainPageURL);
   }
   paintTheBoard(FEN: string) {
     this.board?.setFEN(FEN);
