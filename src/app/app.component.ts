@@ -14,17 +14,24 @@ import { Message } from './models/message';
   styleUrls: ['./app.component.scss'],
 })
 // implements OnInit
-export class AppComponent implements OnChanges {
-  boardSize: number = 300;
+export class AppComponent implements OnChanges, OnInit {
+  boardSize: number = 700;
   @Input() fen: string = '';
   @Input() boardHistory: any[] = [];
 
-  isDisabled: boolean = false;
-  constructor(private ngxChessBoardService: NgxChessBoardService) {
-    window.addEventListener('message', this.handleMessage.bind(this));
-  }
+  constructor(private ngxChessBoardService: NgxChessBoardService) {}
   @ViewChild('board', { static: false }) board: NgxChessBoardView | undefined;
   sendMessage() {
+    if (
+      this.boardHistory != null &&
+      this.board?.getMoveHistory()[this.board?.getMoveHistory().length - 1].x &&
+      this.board?.getMoveHistory()[this.board?.getMoveHistory().length - 1]
+        .check
+    ) {
+      if (confirm('Do you want play another game')) {
+        this.reset();
+      }
+    }
     let message: Message = {
       fen: this.board?.getFEN(),
       boardHistory: this.board?.getMoveHistory(),
@@ -36,16 +43,24 @@ export class AppComponent implements OnChanges {
   }
   ngOnChanges(changes: SimpleChanges) {
     for (let propName in changes) {
-      let chng = changes[propName];
-      let cur = JSON.stringify(chng.currentValue);
-      let prev = JSON.stringify(chng.previousValue);
-      console.log(cur + ' ', prev);
+      let change = changes[propName];
+      let current = JSON.stringify(change.currentValue);
+      let previous = JSON.stringify(change.previousValue);
+      console.log(current + ' ', previous);
     }
   }
   handleMessage(event: Event) {
     const message = event as MessageEvent;
     this.fen = message.data.fen;
     this.boardHistory = message.data.boardHistory;
+    console.log(this.boardHistory);
+
     this.paintTheBoard(this.fen);
+  }
+  reset(): void {
+    this.board?.reset();
+  }
+  ngOnInit(): void {
+    window.addEventListener('message', this.handleMessage.bind(this));
   }
 }
