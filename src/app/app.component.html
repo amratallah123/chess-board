@@ -1,3 +1,1 @@
-<div>
-  <ngx-chess-board id="chess" name="chess" (moveChange)="sendMessage()" [size]="boardSize" #board></ngx-chess-board>
-</div>
+<ngx-chess-board (moveChange)="sendMessage()" [size]="boardSize" #board></ngx-chess-board>
