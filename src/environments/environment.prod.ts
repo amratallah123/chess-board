@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  mainPageURL: 'https://main-project-beta.vercel.app/',
+  mainPageURL: 'https://master--chic-pastelito-a9663b.netlify.app/',
 };
