@@ -16,7 +16,7 @@ import { Message } from './models/message';
 })
 // implements OnInit
 export class AppComponent implements OnChanges, OnInit {
-  boardSize: number = 700;
+  boardSize: number = 400;
   @Input() fen: string = '';
   @Input() boardHistory: any[] = [];
 
@@ -31,13 +31,15 @@ export class AppComponent implements OnChanges, OnInit {
     ) {
       if (confirm('Do you want play another game')) {
         this.reset();
+        parent.postMessage('reset', environment.mainPageURL);
       }
+    } else {
+      let message: Message = {
+        fen: this.board?.getFEN(),
+        boardHistory: this.board?.getMoveHistory(),
+      };
+      parent.postMessage(message, environment.mainPageURL);
     }
-    let message: Message = {
-      fen: this.board?.getFEN(),
-      boardHistory: this.board?.getMoveHistory(),
-    };
-    parent.postMessage(message, environment.mainPageURL);
   }
   paintTheBoard(FEN: string) {
     this.board?.setFEN(FEN);
@@ -52,15 +54,29 @@ export class AppComponent implements OnChanges, OnInit {
   }
   handleMessage(event: Event) {
     const message = event as MessageEvent;
-    this.fen = message.data.fen;
-    this.boardHistory = message.data.boardHistory;
-    console.log(this.boardHistory);
-
-    this.paintTheBoard(this.fen);
+    if (message.data == 'reset') {
+      this.reset();
+    } else if (
+      message.data.fen != null &&
+      message.data.fen.length > 0 &&
+      message.data.boardHistory != null &&
+      message.data.boardHistory.length > 0
+    ) {
+      this.fen = message.data.fen;
+      this.boardHistory = message.data.boardHistory;
+      console.log(this.boardHistory);
+      this.paintTheBoard(this.fen);
+      console.log('message from board:', message.data);
+    }
+  }
+  resetGame() {
+    this.reset();
+    parent.postMessage('reset', environment.mainPageURL);
   }
   reset(): void {
     this.board?.reset();
   }
+
   ngOnInit(): void {
     window.addEventListener('message', this.handleMessage.bind(this));
   }
