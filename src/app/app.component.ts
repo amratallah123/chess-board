@@ -25,7 +25,8 @@ export class AppComponent implements OnChanges, OnInit {
   sendMessage() {
     if (
       this.boardHistory != null &&
-      this.board?.getMoveHistory()[this.board?.getMoveHistory().length - 1].x &&
+      this.board?.getMoveHistory()[this.board?.getMoveHistory().length - 1]
+        .mate &&
       this.board?.getMoveHistory()[this.board?.getMoveHistory().length - 1]
         .check
     ) {
