@@ -17,8 +17,9 @@ import { Message } from './models/message';
 // implements OnInit
 export class AppComponent implements OnChanges, OnInit {
   boardSize: number = 400;
-  @Input() fen: string = '';
-  @Input() boardHistory: any[] = [];
+  @Input() fen!: string;
+  @Input() boardHistory!: any[];
+  ready: boolean = false;
 
   constructor(private ngxChessBoardService: NgxChessBoardService) {}
   @ViewChild('board', { static: false }) board: NgxChessBoardView | undefined;
@@ -77,8 +78,12 @@ export class AppComponent implements OnChanges, OnInit {
   reset(): void {
     this.board?.reset();
   }
-
-  ngOnInit(): void {
-    window.addEventListener('message', this.handleMessage.bind(this));
+  async loadDate() {
+    await window.addEventListener('message', this.handleMessage.bind(this));
+  }
+  async ngOnInit() {
+    await this.loadDate().then((s) => {
+      this.ready = true;
+    });
   }
 }

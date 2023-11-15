@@ -1,1 +1,7 @@
-<ngx-chess-board (moveChange)="sendMessage()" [size]="boardSize" #board></ngx-chess-board>
+<div *ngIf="ready">
+  <ngx-chess-board
+    (moveChange)="sendMessage()"
+    [size]="boardSize"
+    #board
+  ></ngx-chess-board>
+</div>
